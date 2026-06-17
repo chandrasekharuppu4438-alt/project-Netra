@@ -1,6 +1,7 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useWebSocket } from '@/hooks/useWebSocket'
-import { Wifi, WifiOff, Eye, Shield } from 'lucide-react'
+import { Wifi, WifiOff, Eye, Shield, Smartphone, ExternalLink } from 'lucide-react'
 
 interface FeedData {
   frame_b64?: string
@@ -27,6 +28,94 @@ const TYPE_BADGE: Record<string, string> = {
   crowding: 'bg-amber-100 text-amber-800 border-amber-200',
   anomaly: 'bg-red-100 text-red-800 border-red-200',
   critical: 'bg-purple-100 text-purple-800 border-purple-200',
+}
+
+function getMobileCamUrl() {
+  const base = import.meta.env.BASE_URL ?? '/'
+  const path = (base.replace(/\/$/, '') + '/mobile-cam').replace('//', '/')
+  return window.location.origin + path
+}
+
+function PhoneCameraPanel() {
+  const [copied, setCopied] = useState(false)
+  const url = getMobileCamUrl()
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&color=0F6E56&bgcolor=ffffff&data=${encodeURIComponent(url)}&format=svg`
+
+  const copy = () => {
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    })
+  }
+
+  return (
+    <div className="bg-card border border-card-border rounded-xl p-5 shadow-sm">
+      <div className="flex items-center gap-2 mb-4">
+        <Smartphone size={16} className="text-primary" />
+        <h2 className="font-semibold text-sm">Use Your Phone as Camera</h2>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-5 items-center sm:items-start">
+        {/* QR Code */}
+        <div className="shrink-0 flex flex-col items-center gap-2">
+          <div className="p-2.5 bg-white rounded-xl border border-border shadow-sm">
+            <img
+              src={qrSrc}
+              alt="QR code to open mobile camera"
+              width={130}
+              height={130}
+              className="block"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none'
+              }}
+            />
+          </div>
+          <p className="text-[10px] text-muted-foreground">Scan with your phone</p>
+        </div>
+
+        {/* Instructions */}
+        <div className="flex-1 min-w-0">
+          <ol className="space-y-2.5 text-sm">
+            {[
+              { n: 1, text: 'Open your phone camera and scan the QR code' },
+              { n: 2, text: 'Allow camera and microphone permissions when prompted' },
+              { n: 3, text: 'Tap the green button to start streaming to NETRA' },
+              { n: 4, text: 'Walk around — AI detects crowds, threats, and behaviors live' },
+            ].map(({ n, text }) => (
+              <li key={n} className="flex items-start gap-2.5">
+                <span className="w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">
+                  {n}
+                </span>
+                <span className="text-muted-foreground leading-relaxed">{text}</span>
+              </li>
+            ))}
+          </ol>
+
+          <div className="mt-4 flex items-center gap-2 flex-wrap">
+            <button
+              onClick={copy}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border hover:bg-muted transition-colors font-medium"
+            >
+              {copied ? '✓ Copied!' : 'Copy link'}
+            </button>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity font-medium"
+            >
+              Open in browser <ExternalLink size={11} />
+            </a>
+          </div>
+
+          <p className="mt-3 text-[11px] text-muted-foreground/70 leading-relaxed">
+            Works on any phone browser (Chrome, Safari). No app download needed.
+            Frames are processed by YOLOv8 on the backend — all faces are automatically blurred.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default function LiveFeed() {
@@ -57,10 +146,14 @@ export default function LiveFeed() {
         </div>
         <div className={`flex items-center gap-2 text-sm px-3 py-1.5 rounded-full font-medium ${isConnected ? 'text-green-700 bg-green-50 border border-green-200' : 'text-muted-foreground bg-muted'}`}>
           {isConnected ? <Wifi size={14} /> : <WifiOff size={14} />}
-          {isConnected ? 'Connected' : 'Connecting...'}
+          {isConnected ? 'Backend Connected' : 'No backend — demo mode'}
         </div>
       </div>
 
+      {/* Phone Camera Section */}
+      <PhoneCameraPanel />
+
+      {/* Live Feed Frame */}
       <div className="bg-card border border-card-border rounded-xl overflow-hidden shadow-sm">
         <div className="relative bg-black min-h-[360px] flex items-center justify-center">
           {fd?.frame_b64 ? (
@@ -73,7 +166,7 @@ export default function LiveFeed() {
             <div className="flex flex-col items-center gap-3 text-white/40">
               <Eye size={48} strokeWidth={1} />
               <p className="text-sm">
-                {isConnected ? 'Awaiting frame...' : 'Connecting to camera feed...'}
+                {isConnected ? 'Awaiting frame...' : 'Start backend or use phone camera above'}
               </p>
             </div>
           )}

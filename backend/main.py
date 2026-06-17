@@ -21,6 +21,7 @@ from analytics import compute_forecast, compute_co2_saved, get_aqi, seed_environ
 
 connected_feed_clients: list[WebSocket] = []
 connected_alert_clients: list[WebSocket] = []
+mobile_cam_active: bool = False
 frame_counter = 0
 
 
@@ -142,6 +143,89 @@ async def ws_alerts(websocket: WebSocket):
     except WebSocketDisconnect:
         if websocket in connected_alert_clients:
             connected_alert_clients.remove(websocket)
+
+
+@app.websocket("/ws/mobile-cam")
+async def ws_mobile_cam(websocket: WebSocket):
+    """Receive JPEG frames from a mobile browser camera, process with YOLOv8,
+    and broadcast the results to all connected desktop feed clients."""
+    global mobile_cam_active
+    await websocket.accept()
+    mobile_cam_active = True
+    try:
+        while True:
+            raw = await websocket.receive_text()
+            try:
+                payload = json.loads(raw)
+                b64 = payload.get("frame_b64", "")
+                if not b64:
+                    continue
+
+                import base64
+                import numpy as np
+                import cv2
+
+                frame_bytes = base64.b64decode(b64)
+                nparr = np.frombuffer(frame_bytes, np.uint8)
+                frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                if frame is None:
+                    continue
+
+                # Run detection on the real phone frame
+                person_count, bboxes, _ = detect_frame(frame)
+                behaviors = estimate_pose_threat(frame, bboxes)
+                density = compute_density(person_count)
+                motion_delta = random.uniform(0.5, 2.0)
+                incident_type, severity = classify_incident(density, behaviors, motion_delta)
+                threat_score = min(100, severity + random.randint(-8, 8))
+
+                blurred = blur_faces(frame, bboxes)
+                frame_b64_out = encode_frame_b64(blurred)
+
+                zone = "mobile"
+                heatmap_points = generate_heatmap_points(person_count, "zone_1")
+
+                feed_data = {
+                    "frame_b64": frame_b64_out,
+                    "person_count": person_count,
+                    "density": round(density, 2),
+                    "incident_type": incident_type,
+                    "severity": severity,
+                    "threat_score": threat_score,
+                    "threat_behaviors": behaviors,
+                    "zone": zone,
+                    "heatmap_points": heatmap_points,
+                    "timestamp": datetime.utcnow().isoformat(),
+                    "source": "mobile",
+                }
+
+                # Broadcast to all desktop feed viewers
+                dead = []
+                for ws in connected_feed_clients:
+                    try:
+                        await ws.send_text(json.dumps(feed_data))
+                    except Exception:
+                        dead.append(ws)
+                for ws in dead:
+                    connected_feed_clients.remove(ws)
+
+                # Evaluate alert
+                if severity > 50:
+                    level = evaluate_alert(severity, threat_score)
+                    if level:
+                        incident_obj = type("Incident", (), {
+                            "zone": zone, "type": incident_type, "severity": severity,
+                            "threat_score": threat_score, "threat_behaviors": behaviors,
+                            "person_count": person_count, "density": density,
+                            "timestamp": datetime.utcnow(),
+                        })()
+                        await dispatch_alert(incident_obj, level, connected_alert_clients)
+
+            except Exception as e:
+                print(f"Mobile cam frame error: {e}")
+
+    except WebSocketDisconnect:
+        mobile_cam_active = False
 
 
 class ConsentInput(BaseModel):

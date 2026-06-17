@@ -20,6 +20,7 @@ import Incidents from '@/pages/Incidents'
 import ConsentPortal from '@/pages/ConsentPortal'
 import Environment from '@/pages/Environment'
 import SOS from '@/pages/SOS'
+import MobileCam from '@/pages/MobileCam'
 import ChatWidget from '@/components/ChatWidget'
 import VoiceAlert from '@/components/VoiceAlert'
 
@@ -176,7 +177,10 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
-        <Layout />
+        <Switch>
+          <Route path="/mobile-cam" component={MobileCam} />
+          <Route component={Layout} />
+        </Switch>
       </WouterRouter>
     </QueryClientProvider>
   )
