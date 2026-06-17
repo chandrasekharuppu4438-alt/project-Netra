@@ -1,22 +1,32 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: NETRA public safety platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: incidents
+    description: Incident management
+  - name: consent
+    description: Citizen consent management
+  - name: analytics
+    description: Analytics and forecasting
+  - name: environment
+    description: Environmental monitoring
+  - name: sos
+    description: SOS emergency reports
+  - name: chat
+    description: AI chat assistant
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +34,189 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /incidents:
+    get:
+      operationId: listIncidents
+      tags: [incidents]
+      summary: List incidents
+      parameters:
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+        - name: zone
+          in: query
+          schema: { type: string }
+        - name: type
+          in: query
+          schema: { type: string }
+        - name: severity_min
+          in: query
+          schema: { type: integer }
+        - name: severity_max
+          in: query
+          schema: { type: integer }
+        - name: date_from
+          in: query
+          schema: { type: string }
+        - name: date_to
+          in: query
+          schema: { type: string }
+      responses:
+        "200":
+          description: List of incidents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentListResponse"
+
+  /incidents/stats:
+    get:
+      operationId: getIncidentStats
+      tags: [incidents]
+      summary: Get incident statistics
+      responses:
+        "200":
+          description: Incident statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IncidentStats"
+
+  /incidents/{id}:
+    patch:
+      operationId: updateIncident
+      tags: [incidents]
+      summary: Update incident status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/IncidentUpdate"
+      responses:
+        "200":
+          description: Updated incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Incident"
+
+  /consent:
+    post:
+      operationId: registerConsent
+      tags: [consent]
+      summary: Register citizen consent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsentInput"
+      responses:
+        "201":
+          description: Consent registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsentRecord"
+
+  /consent/{id}:
+    delete:
+      operationId: revokeConsent
+      tags: [consent]
+      summary: Revoke citizen consent
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Consent revoked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsentRecord"
+
+  /sos:
+    post:
+      operationId: submitSOS
+      tags: [sos]
+      summary: Submit SOS report
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SOSInput"
+      responses:
+        "201":
+          description: SOS submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SOSReport"
+
+  /chat:
+    post:
+      operationId: sendChat
+      tags: [chat]
+      summary: Send message to NETRA AI assistant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatInput"
+      responses:
+        "200":
+          description: AI response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatResponse"
+
+  /analytics/forecast:
+    get:
+      operationId: getForecast
+      tags: [analytics]
+      summary: Get 15-minute density forecast
+      parameters:
+        - name: zone
+          in: query
+          schema: { type: string, default: "zone_1" }
+      responses:
+        "200":
+          description: Forecast data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ForecastPoint"
+
+  /environment/aqi:
+    get:
+      operationId: getAQI
+      tags: [environment]
+      summary: Get air quality data
+      responses:
+        "200":
+          description: AQI data per zone
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AQIResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +224,211 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+        db:
+          type: string
+        ai:
+          type: string
+      required: [status]
 
+    Incident:
+      type: object
+      properties:
+        id:
+          type: string
+        zone:
+          type: string
+        type:
+          type: string
+        severity:
+          type: integer
+        threat_score:
+          type: integer
+        threat_behaviors:
+          type: array
+          items: { type: string }
+        person_count:
+          type: integer
+        density:
+          type: number
+        timestamp:
+          type: string
+        resolved:
+          type: boolean
+        assigned_to:
+          type: ["string", "null"]
+        sos_triggered:
+          type: boolean
+        status:
+          type: ["string", "null"]
+      required: [id, zone, type, severity, threat_score, person_count, density, timestamp, resolved, sos_triggered]
+
+    IncidentUpdate:
+      type: object
+      properties:
+        resolved:
+          type: boolean
+        assigned_to:
+          type: ["string", "null"]
+        status:
+          type: ["string", "null"]
+
+    IncidentListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Incident"
+        total:
+          type: integer
+        page:
+          type: integer
+        pages:
+          type: integer
+      required: [items, total, page, pages]
+
+    IncidentStats:
+      type: object
+      properties:
+        total_today:
+          type: integer
+        active_alerts:
+          type: integer
+        zones_monitored:
+          type: integer
+        citizens_enrolled:
+          type: integer
+        by_type:
+          type: object
+          additionalProperties: { type: integer }
+        by_severity:
+          type: object
+          additionalProperties: { type: integer }
+        by_zone:
+          type: object
+          additionalProperties: { type: integer }
+      required: [total_today, active_alerts, zones_monitored, citizens_enrolled]
+
+    ConsentInput:
+      type: object
+      properties:
+        citizen_name:
+          type: string
+        phone:
+          type: string
+        zone:
+          type: string
+        language:
+          type: string
+      required: [citizen_name, phone, zone, language]
+
+    ConsentRecord:
+      type: object
+      properties:
+        id:
+          type: string
+        citizen_name:
+          type: string
+        phone:
+          type: string
+        zone:
+          type: string
+        language:
+          type: string
+        active:
+          type: boolean
+        created_at:
+          type: string
+      required: [id, citizen_name, phone, zone, language, active, created_at]
+
+    SOSInput:
+      type: object
+      properties:
+        citizen_id:
+          type: ["string", "null"]
+        latitude:
+          type: number
+        longitude:
+          type: number
+        voice_note_b64:
+          type: ["string", "null"]
+        photo_b64:
+          type: ["string", "null"]
+      required: [latitude, longitude]
+
+    SOSReport:
+      type: object
+      properties:
+        id:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        timestamp:
+          type: string
+        resolved:
+          type: boolean
+        reference:
+          type: string
+      required: [id, latitude, longitude, timestamp, resolved, reference]
+
+    ChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+        language:
+          type: string
+        history:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+      required: [message, language]
+
+    ChatResponse:
+      type: object
+      properties:
+        reply:
+          type: string
+        language_detected:
+          type: string
+      required: [reply, language_detected]
+
+    ForecastPoint:
+      type: object
+      properties:
+        time_label:
+          type: string
+        predicted:
+          type: number
+        upper:
+          type: number
+        lower:
+          type: number
+      required: [time_label, predicted, upper, lower]
+
+    AQIZone:
+      type: object
+      properties:
+        zone:
+          type: string
+        aqi:
+          type: integer
+        category:
+          type: string
+      required: [zone, aqi, category]
+
+    AQIResponse:
+      type: object
+      properties:
+        zones:
+          type: array
+          items:
+            $ref: "#/components/schemas/AQIZone"
+        co2_kg:
+          type: number
+        events_count:
+          type: integer
+      required: [zones, co2_kg, events_count]

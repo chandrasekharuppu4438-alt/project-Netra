@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "डैशबोर्ड",
+    "liveFeed": "लाइव फ़ीड",
+    "incidents": "घटनाएं",
+    "consent": "सहमति पोर्टल",
+    "environment": "पर्यावरण",
+    "sos": "आपातकाल"
+  },
+  "dashboard": {
+    "totalIncidents": "आज की कुल घटनाएं",
+    "activeAlerts": "सक्रिय अलर्ट",
+    "zonesMonitored": "निगरानी क्षेत्र",
+    "citizensEnrolled": "नामांकित नागरिक",
+    "forecast": "15-मिनट का पूर्वानुमान",
+    "recentAlerts": "हाल के अलर्ट",
+    "liveActivity": "लाइव गतिविधि"
+  },
+  "consent": {
+    "title": "नागरिक सहमति पोर्टल",
+    "register": "सहमति दर्ज करें",
+    "revoke": "सहमति रद्द करें",
+    "active": "सहमति सक्रिय",
+    "privacyGrade": "गोपनीयता ग्रेड",
+    "name": "पूरा नाम",
+    "phone": "फ़ोन नंबर",
+    "zone": "क्षेत्र",
+    "language": "भाषा",
+    "submit": "दर्ज करें",
+    "success": "सहमति सफलतापूर्वक दर्ज की गई",
+    "revokeSuccess": "डेटा सुरक्षा सक्रिय की गई",
+    "dataUsage": "केवल क्षेत्र-स्तरीय आवागमन पैटर्न",
+    "retention": "30 दिन की रोलिंग विंडो"
+  },
+  "sos": {
+    "title": "आपातकालीन SOS",
+    "press": "सहायता के लिए दबाएं और रोकें",
+    "recording": "वॉयस नोट रिकॉर्ड हो रही है...",
+    "sending": "SOS भेजा जा रहा है...",
+    "sent": "SOS भेज दिया गया। सहायता आ रही है।",
+    "stayCalm": "शांत रहें। अधिकारियों को सूचित किया गया है।",
+    "emergency": "आपातकालीन संपर्क",
+    "police": "पुलिस",
+    "ambulance": "एम्बुलेंस",
+    "fire": "अग्निशमन",
+    "women": "महिला हेल्पलाइन"
+  },
+  "chat": {
+    "welcome": "नमस्ते! मैं NETRA Assist हूँ। आज मैं आपकी कैसे सहायता कर सकता हूँ?",
+    "placeholder": "अपना संदेश टाइप करें...",
+    "send": "भेजें",
+    "title": "NETRA Assist",
+    "chips": {
+      "report": "घटना की रिपोर्ट करें",
+      "revoke": "सहमति रद्द करें",
+      "contacts": "आपातकालीन संपर्क",
+      "privacy": "NETRA मेरी सुरक्षा कैसे करता है?"
+    }
+  },
+  "liveFeed": {
+    "title": "लाइव कैमरा फ़ीड",
+    "privacy": "NETRA गोपनीयता इंजन द्वारा सभी चेहरे अनामित",
+    "aiActive": "AI सक्रिय",
+    "live": "LIVE",
+    "density": "भीड़ घनत्व",
+    "threatScore": "खतरा स्कोर",
+    "personCount": "पहचाने गए लोग",
+    "behaviors": "पहचाने गए व्यवहार"
+  },
+  "incidents": {
+    "title": "घटना लॉग",
+    "zone": "क्षेत्र",
+    "type": "प्रकार",
+    "severity": "गंभीरता",
+    "threatScore": "खतरा स्कोर",
+    "personCount": "लोग",
+    "timestamp": "समय",
+    "sos": "SOS",
+    "assignedTo": "असाइन किया",
+    "status": "स्थिति",
+    "actions": "कार्रवाई",
+    "acknowledge": "स्वीकार करें",
+    "resolve": "हल करें",
+    "assign": "असाइन करें",
+    "exportCsv": "CSV निर्यात करें",
+    "noData": "कोई घटना नहीं मिली"
+  },
+  "environment": {
+    "title": "पर्यावरणीय प्रभाव",
+    "co2Saved": "kg CO₂ आज बचाया",
+    "tagline": "NETRA केवल लोगों की नहीं — ग्रह की भी रक्षा करता है।",
+    "aqi": "वायु गुणवत्ता सूचकांक",
+    "good": "अच्छा",
+    "moderate": "मध्यम",
+    "unhealthy": "अस्वस्थ",
+    "hazardous": "खतरनाक",
+    "trafficReroutes": "ट्रैफिक रीरूट घटनाएं",
+    "vehiclesRerouted": "रीरूट वाहन",
+    "minutesSaved": "बचाए गए मिनट",
+    "co2Avoided": "CO₂ बचाया"
+  }
+}

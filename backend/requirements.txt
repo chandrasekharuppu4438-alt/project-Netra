@@ -1,0 +1,16 @@
+ultralytics
+fastapi
+uvicorn[standard]
+opencv-python-headless
+mediapipe
+anthropic
+motor
+beanie
+python-multipart
+websockets
+pillow
+numpy
+pandas
+python-dotenv
+httpx
+pymongo

@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "liveFeed": "Live Feed",
+    "incidents": "Incidents",
+    "consent": "Consent Portal",
+    "environment": "Environment",
+    "sos": "SOS"
+  },
+  "dashboard": {
+    "totalIncidents": "Total Incidents Today",
+    "activeAlerts": "Active Alerts",
+    "zonesMonitored": "Zones Monitored",
+    "citizensEnrolled": "Citizens Enrolled",
+    "forecast": "15-Minute Forecast",
+    "recentAlerts": "Recent Alerts",
+    "liveActivity": "Live Activity"
+  },
+  "consent": {
+    "title": "Citizen Consent Portal",
+    "register": "Register Consent",
+    "revoke": "Revoke Consent",
+    "active": "Consent Active",
+    "privacyGrade": "Privacy Grade",
+    "name": "Full Name",
+    "phone": "Phone Number",
+    "zone": "Zone",
+    "language": "Language",
+    "submit": "Register",
+    "success": "Consent registered successfully",
+    "revokeSuccess": "Data protection activated",
+    "dataUsage": "Zone-level movement patterns only",
+    "retention": "30 days rolling window"
+  },
+  "sos": {
+    "title": "Emergency SOS",
+    "press": "Press & Hold for Help",
+    "recording": "Recording your voice note...",
+    "sending": "Sending SOS...",
+    "sent": "SOS Sent. Help is on the way.",
+    "stayCalm": "Stay calm. Authorities have been notified.",
+    "emergency": "Emergency Contacts",
+    "police": "Police",
+    "ambulance": "Ambulance",
+    "fire": "Fire Brigade",
+    "women": "Women Helpline"
+  },
+  "chat": {
+    "welcome": "Namaste! I am NETRA Assist. How can I help you today?",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "title": "NETRA Assist",
+    "chips": {
+      "report": "Report an incident",
+      "revoke": "Revoke my consent",
+      "contacts": "Emergency contacts",
+      "privacy": "How does NETRA protect me?"
+    }
+  },
+  "liveFeed": {
+    "title": "Live Camera Feed",
+    "privacy": "All faces anonymised by NETRA privacy engine",
+    "aiActive": "AI ACTIVE",
+    "live": "LIVE",
+    "density": "Crowd Density",
+    "threatScore": "Threat Score",
+    "personCount": "Persons Detected",
+    "behaviors": "Detected Behaviors"
+  },
+  "incidents": {
+    "title": "Incident Log",
+    "zone": "Zone",
+    "type": "Type",
+    "severity": "Severity",
+    "threatScore": "Threat Score",
+    "personCount": "Persons",
+    "timestamp": "Time",
+    "sos": "SOS",
+    "assignedTo": "Assigned To",
+    "status": "Status",
+    "actions": "Actions",
+    "acknowledge": "Acknowledge",
+    "resolve": "Resolve",
+    "assign": "Assign",
+    "exportCsv": "Export CSV",
+    "noData": "No incidents found"
+  },
+  "environment": {
+    "title": "Environmental Impact",
+    "co2Saved": "kg CO₂ prevented today",
+    "tagline": "NETRA doesn't just protect people — it protects the planet.",
+    "aqi": "Air Quality Index",
+    "good": "Good",
+    "moderate": "Moderate",
+    "unhealthy": "Unhealthy",
+    "hazardous": "Hazardous",
+    "trafficReroutes": "Traffic Reroute Events",
+    "vehiclesRerouted": "Vehicles Rerouted",
+    "minutesSaved": "Minutes Saved",
+    "co2Avoided": "CO₂ Avoided"
+  }
+}
